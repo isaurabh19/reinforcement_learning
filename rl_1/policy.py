@@ -1,0 +1,84 @@
+import random
+import numpy as np
+
+
+class Policy:
+    action_dict = {'u': 'up', 'd': 'down', 'r': 'right', 'l': 'left'}
+
+    def get_action(self, state, *args):
+        pass
+
+
+class ManualPolicy(Policy):
+
+    def get_action(self, state, *args):
+        print(state)
+        action = input("Select an action as u,d,r,l for up, down, right, left respectively")
+        return self.action_dict[action]
+
+
+class RandomPolicy(Policy):
+
+    def get_action(self, state, *args):
+        # print(state)
+        return random.choice(list(self.action_dict.values()))
+
+
+class WorsePolicy(Policy):
+
+    def get_action(self, state, *args):
+        return self.action_dict['r']
+
+
+class BetterThanRandomPolicy(Policy):
+    state_action_map = {}
+
+    def get_action(self, state, *args):
+        start = args[0]
+        if start in self.state_action_map:
+            return self.action_dict[self.state_action_map[start]]
+
+        return self.action_dict[self.__dfs(state, (0, 10), start)]
+
+    def __dfs(self, state, goal, start):
+        def add_neighbours(og_position):
+            neighbours = [((og_position[0] + 1, og_position[1]), 'd'),
+                          ((og_position[0] - 1, og_position[1]), 'u'),
+                          ((og_position[0], og_position[1] + 1), 'r'),
+                          ((og_position[0], og_position[1] - 1), 'l')]
+            np.random.shuffle(neighbours)  # To get new paths at each trial
+            for neighbour in neighbours:
+                coordinate, action = neighbour
+                if 0 <= coordinate[0] < 11 and 0 <= coordinate[1] < 11 and state[coordinate] != -1 \
+                        and visited[coordinate] == 0:
+                    stack.append(neighbour)
+                    path[coordinate] = (og_position, action)
+
+        stack = [(start, 'o')]
+        path = {}
+        visited = np.zeros((11, 11))
+        goal_found = False
+        while stack:
+            top = stack.pop()
+            pos, _ = top
+            if pos == goal:
+                goal_found = True
+                break
+            visited[pos] = 1
+            add_neighbours(pos)
+        if goal_found:
+            node = goal
+            while node != start:
+                self.state_action_map[path[node][0]] = path[node][1]
+                node = path[node][0]
+            return self.state_action_map[start]
+
+
+class LearningPolicy(Policy):
+    max_reward_loc = tuple()
+
+    def get_action(self, state, *args):
+        if self.max_reward_loc:
+            pass
+        else:
+            return random.choice(list(self.action_dict.values()))
