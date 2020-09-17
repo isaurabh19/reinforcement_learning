@@ -27,10 +27,10 @@ class Environment:
         self.grid[self.current] = 0
         self.grid[new_current] = 5
         self.current = new_current
-        if reward == 1:
-            self.current = self.start
         return self.grid, reward
 
+    def reset_game(self):
+        self.current = self.start
     def __move(self, action):
         reward = 0
         action_obj = self.action_dict[action]
