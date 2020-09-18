@@ -54,6 +54,7 @@ def learning_agent(goal):
         four_rooms = Environment()
         four_rooms.target = goal
         state = four_rooms.grid
+        policy.max_reward_loc = None
         while steps < 10000:
             action = policy.get_action(state, four_rooms.current)
             state, r = four_rooms.simulate(action)
@@ -74,7 +75,7 @@ def learning_agent(goal):
 
 def get_random_goal():
     env = Environment()
-    goal = tuple(np.random.randint(0, 10, [2]))
+    goal = tuple(np.random.randint(0, 5, [2]))
     while not (0 <= goal[0] < env.grid.shape[0] and 0 <= goal[1] < env.grid.shape[1] and env.grid[goal] != -1):
         goal = tuple(np.random.randint(0, 10, [2]))
     return goal
