@@ -56,7 +56,6 @@ class ManualPolicy(Policy):
 class RandomPolicy(Policy):
 
     def get_action(self, state, *args):
-        # print(state)
         return random.choice(list(self.action_dict.values()))
 
 
@@ -71,10 +70,6 @@ class BetterThanRandomPolicy(Policy):
     def get_action(self, state, *args):
         start = args[0]
         reward_loc = args[1]
-        # if start in self.state_action_map:  # A type of memoization to avoid redundant calculation
-        #     return self.action_dict[self.state_action_map[start]]
-        #
-        # return self.action_dict[self._dfs(state, self.goal, start)]
         return self.__stochastic_policy(start, reward_loc)
 
     def __stochastic_policy(self, current, reward_loc=None):

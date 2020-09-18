@@ -34,13 +34,9 @@ def non_learning_agent(policy, new_goal=None):
             reward_sum += r
             reward.append(reward_sum)
             if r == 1:
-                # print(f"game won! in step no {steps}")
                 reward_loc = four_rooms.current
                 four_rooms.reset_game()
-            # if steps % 1000 == 0:
-            # print(f'Steps finished {steps}/10000')
         rewards_trails.append(reward)
-        # print(f"Trial {i + 1}/10 done")
         i += 1
 
     rewards_trails = np.array(rewards_trails)
@@ -65,16 +61,11 @@ def learning_agent(goal):
             reward_sum += r
             reward.append(reward_sum)
             if r == 1:
-                print(f"game won! in step no {steps}")
                 # Agent learns this is where it gets the max reward and remembers this information so that it can
                 # exploit
                 policy.max_reward_loc = four_rooms.current
                 four_rooms.reset_game()
-
-            if steps % 1000 == 0:
-                print(f'Steps finished {steps}/10000')
         rewards_trails.append(reward)
-        print(f"Trial {i + 1}/10 done")
         i += 1
 
     rewards_trails = np.array(rewards_trails)
@@ -96,18 +87,18 @@ def plot(rewards_trails, color):
     return line
 
 
-# manual_agent()
-# random_policy_rewards = non_learning_agent(RandomPolicy())
-# worse_policy_rewards = non_learning_agent(WorsePolicy())
-# better_policy_rewards = non_learning_agent(BetterThanRandomPolicy())
-# line1 = plot(random_policy_rewards, 'red')
-# line2 = plot(worse_policy_rewards, 'green')
-# line3 = plot(better_policy_rewards, 'blue')
-# plt.ylabel("Cumulative reward")
-# plt.xlabel("Steps")
-# plt.legend([line1, line2, line3], ['random', 'worse', 'better'])
-# plt.savefig('qt4.png')
-# plt.show()
+manual_agent()
+random_policy_rewards = non_learning_agent(RandomPolicy())
+worse_policy_rewards = non_learning_agent(WorsePolicy())
+better_policy_rewards = non_learning_agent(BetterThanRandomPolicy())
+line1 = plot(random_policy_rewards, 'red')
+line2 = plot(worse_policy_rewards, 'green')
+line3 = plot(better_policy_rewards, 'blue')
+plt.ylabel("Cumulative reward")
+plt.xlabel("Steps")
+plt.legend([line1, line2, line3], ['random', 'worse', 'better'])
+plt.savefig('qt4.png')
+plt.show()
 
 random_goal = get_random_goal()
 print(f"New goal is {random_goal}")
