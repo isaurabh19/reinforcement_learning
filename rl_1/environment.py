@@ -31,6 +31,7 @@ class Environment:
 
     def reset_game(self):
         self.current = self.start
+
     def __move(self, action):
         reward = 0
         action_obj = self.action_dict[action]
@@ -46,7 +47,8 @@ class Action:
         self.grid = grid
 
     def is_allowed(self, position):
-        if 0 <= position[0] < self.grid.shape[0] and 0 <= position[1] < self.grid.shape[1] and self.grid[position] != -1:
+        if 0 <= position[0] < self.grid.shape[0] and 0 <= position[1] < self.grid.shape[1] and self.grid[
+            position] != -1:
             return True
         return False
 
