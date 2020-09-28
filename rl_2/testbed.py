@@ -1,43 +1,61 @@
 import numpy as np
-import time
-from joblib import Parallel, delayed
 from matplotlib import pyplot as plt
+
+trials = 2000
+default_steps = 10000
 
 
 def get_qstar():
     return np.random.normal(size=10)
 
 
-def run(qstars):
-    # TODO make it generic so that q7 can be done
-    # for step in range(10000):
-    #     tuple(np.random.normal(qstar) for qstar in qstars)
-    return [tuple(np.random.normal(qstar) for qstar in qstars) for step in range(10000)]
+def q4():
+    testbed = []
+    for _ in range(trials):
+        qstar_trials = get_qstar()
+        reward_registry_single_trials = np.array(
+            [np.random.normal(qstar, 1.0, default_steps) for qstar in qstar_trials]).T
+        testbed.append(reward_registry_single_trials)
+    testbed = np.array(testbed)
+    np.save('testbed.npy', testbed)
+    print("Q4 done")
 
 
-# start = time.time()
-# qstar_trials = np.array([get_qstar() for i in range(500)])
-#
-# testbed = Parallel(n_jobs=8)(delayed(run)(qstar) for qstar in qstar_trials)
-# testbed = np.array(testbed)
-# np.save('final_test.npy', testbed)
-testbed = np.load('final_test.npy')
-trial = testbed[0]
-true_means = np.mean(trial, axis=0)
-true_variances = np.var(trial, axis=0)
+def q7():
+    testbed = []
+    qstar_bed = []
+    for _ in range(trials):
+        qstar_trials = np.zeros(10)
+        qstar_registry = []
+        reward_registry = []
+        for step in range(default_steps):
+            reward_registry.append(tuple(np.random.normal(qstar, 1) for qstar in qstar_trials))
+            additions = np.random.normal(0, 0.01, 10)
+            qstar_trials = np.add(qstar_trials, additions)
+            qstar_registry.append(qstar_trials)
+        qstar_bed.append(qstar_registry)
+        testbed.append(reward_registry)
+    qstar_bed = np.array(qstar_bed)
+    testbed = np.array(testbed)
+    np.save('nonstationary_testbed.npy', testbed)
+    np.save('nonstationary_qstars.npy', qstar_bed)
 
-actions = np.arange(10)
-sample_rewards = [[] for i in range(10)]
-for step in range(10000):
-    action = actions[step % 10]
-    reward = trial[step, action]
-    sample_rewards[action].append(reward)
 
-plt.violinplot(sample_rewards, showmeans=True)
-plt.show()
-# sample_rewards = np.array(sample_rewards)
-# sample_mean = np.mean(sample_rewards, axis=1)
-# import glob
-# arrs = [ np.load(file) for file in glob.glob('*.npy')]
-# final_test = np.concatenate(arrs, axis=0)
-# np.save('final_test.npy', final_test)
+def violin_plot(testbed):
+    actions = np.arange(10)
+    sample_rewards = [[] for i in range(10)]
+    trial = testbed[0]
+    for step in range(10000):
+        action = actions[step % 10]
+        reward = trial[step, action]
+        sample_rewards[action].append(reward)
+
+    plt.violinplot(sample_rewards, showmeans=True)
+    plt.savefig('violin_plot.png')
+    plt.show()
+
+
+q4()
+q7()
+testbed = np.load('testbed.npy')
+violin_plot(testbed)
